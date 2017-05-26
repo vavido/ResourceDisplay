@@ -37,8 +37,7 @@ char decodeChar(byte b){
 void printDigits(byte addr, byte data){
   int ic = addr > 2 ? 1 : 0;
   int s = addr % 2 == 0 ? 0 : 4;
-
-  lc.setChar(ic, 
+ 
 }
 
 void loop() {
