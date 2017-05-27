@@ -35,18 +35,19 @@ byte decodeAddress(byte c) {
  * Format:
  *  First bit set <=> decimal point set
  *  
- *  Rest of the byte: number of the char to display
- *  Order: 0-9, other chars, space
+ *  Rest of the byte: ascii encoding of the char
  */
-char decodeChar(byte b){
-  
-}
 
-void printDigits(byte addr,  char[] data){
+void printDigits(byte addr, byte[] data){
   int ic = addr > 2 ? 1 : 0;
   int s = addr % 2 == 0 ? 0 : 4;
 
-  
+  for(int i = 0; i < data.lenth; i++){
+    bool dp = data[i] >> 7; // Most significat bit indicates decimal point
+    char c = data[i] & 0x7F; // 7 least significant bytes are the char data
+
+    lc.setChar(ic, s+i, c); 
+  }
 }
 
 void loop() {
@@ -57,11 +58,12 @@ void loop() {
       byte command = Serial.read();
       switch (decodeCommand(command)) {
         case CMD_WRITE:
+          
           byte address = decodeAddress(command);
 
-          char chars[4];
+          byte data[4];
           for (int i = 0; i < 4; i++) {
-            data[i] = decodeChar(Serial.read());
+            data[i] = Serial.read();
           }
 
           printDigits(address, data);

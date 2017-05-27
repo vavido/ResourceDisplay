@@ -217,3 +217,7 @@ FakesAssemblies/
 _Pvt_Extensions
 
 *.cache
+
+ArduinoSerial/ArduinoSerial/obj/Debug/ArduinoSerial\.csproj\.FileListAbsolute\.txt
+
+ArduinoSerial/ArduinoSerial/obj/Debug/
