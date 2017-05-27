@@ -26,18 +26,27 @@ byte decodeCommand(byte c) {
   return c >> 4;
 }
 
-byte decodeAdress(byte c) {
+byte decodeAddress(byte c) {
   return c & 0xF;
 }
 
+
+/*
+ * Format:
+ *  First bit set <=> decimal point set
+ *  
+ *  Rest of the byte: number of the char to display
+ *  Order: 0-9, other chars, space
+ */
 char decodeChar(byte b){
   
 }
 
-void printDigits(byte addr, byte data){
+void printDigits(byte addr,  char[] data){
   int ic = addr > 2 ? 1 : 0;
   int s = addr % 2 == 0 ? 0 : 4;
- 
+
+  
 }
 
 void loop() {
@@ -50,7 +59,7 @@ void loop() {
         case CMD_WRITE:
           byte address = decodeAddress(command);
 
-          char data[4];
+          char chars[4];
           for (int i = 0; i < 4; i++) {
             data[i] = decodeChar(Serial.read());
           }
