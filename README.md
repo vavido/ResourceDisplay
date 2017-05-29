@@ -1,1 +1,9 @@
-RDisplay
+#Resource Display (working name)
+
+##Protocol
+
+###Establishing a connection
+
+The PC sends two random bytes. The arduino has to add the bytes and send the result back. 
+
+When the PC receives the correct sum he acknowledges this with the magic number 42
