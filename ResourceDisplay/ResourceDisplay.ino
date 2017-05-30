@@ -17,7 +17,7 @@ void setup() {
   Serial.begin(BAUDRATE);
 
   lc.shutdown(0, false);
-  lc.setIntensity(0, 8);
+  lc.setIntensity(0, 15);
   lc.clearDisplay(0);
 
   lc.setChar(0, 3, '_', false);
@@ -33,7 +33,6 @@ byte decodeCommand(byte c) {
 byte decodeAddress(byte c) {
   return c & 0xF;
 }
-
 
 /*
    Format:
