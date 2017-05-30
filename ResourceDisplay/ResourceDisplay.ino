@@ -10,15 +10,19 @@ const byte CMD_WRITE = 1;
 const byte CMD_SLEEP = 2;
 const byte CMD_WAKEUP = 3;
 
+const int BAUDRATE = 115200;
+
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(BAUDRATE);
 
   lc.shutdown(0, false);
   lc.setIntensity(0, 8);
   lc.clearDisplay(0);
 
   lc.setChar(0, 3, '_', false);
+  delay(250);
+  lc.setChar(0, 3, '-', false);
 
 }
 
@@ -67,7 +71,7 @@ void loop() {
             }
 
             printDigits(address, data);
-            
+
           } break;
 
         default:
