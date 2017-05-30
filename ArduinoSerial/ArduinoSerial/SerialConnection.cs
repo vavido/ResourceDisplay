@@ -33,7 +33,7 @@ namespace ArduinoSerial {
         /// </summary>
         private const long MAX_WAIT = 1000 * TimeSpan.TicksPerMillisecond;
 
-        private const int BAUDRATE = 115200;
+        private const int BAUDRATE = 9600;
 
         private const String printableChars = "0123456789AaBbCcDdEeFfHhLlPp-.,_ ";
 
@@ -181,6 +181,11 @@ namespace ArduinoSerial {
             byte[] allData = new byte[5];
             allData[0] = command;
             Array.Copy(d, 0, allData, 1, 4);
+
+            Debug.WriteLine("Sending data:");
+            foreach(byte b  in allData) {
+                Debug.WriteLine(Convert.ToString(b, 2).PadLeft(8, '0'));
+            }
 
             connection.Write(allData, 0, 5);
         }

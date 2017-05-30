@@ -10,7 +10,7 @@ const byte CMD_WRITE = 1;
 const byte CMD_SLEEP = 2;
 const byte CMD_WAKEUP = 3;
 
-const int BAUDRATE = 115200;
+const int BAUDRATE = 9600;
 
 void setup() {
 
@@ -46,7 +46,7 @@ void printDigits(byte addr, byte data[]) {
   int ic = addr > 2 ? 1 : 0;
   int s = addr % 2 == 0 ? 0 : 4;
 
-  for (int i = 0; i < sizeof(data); i++) {
+  for (int i = 0; i < 4; i++) {
     bool dp = data[i] >> 7; // Most significat bit indicates decimal point
     char c = data[i] & 0x7F; // 7 least significant bytes are the char data
 
@@ -59,13 +59,18 @@ void loop() {
   if (conn) {
 
     if (Serial.available()) {
+      
       byte command = Serial.read();
+      
       switch (decodeCommand(command)) {
+      
         case CMD_WRITE: {
 
             byte address = decodeAddress(command);
 
             byte data[4];
+            while(Serial.available() < 4){} //Wait for the rest of the package
+            
             for (int i = 0; i < 4; i++) {
               data[i] = Serial.read();
             }
@@ -90,6 +95,9 @@ void loop() {
 
       //Send ack: add a and b
       Serial.write(a + b);
+
+      lc.setDigit(0, 1, a%10, false);
+      lc.setDigit(0, 3, b%10, false);
 
       //Wait for synack
       while (!Serial.available()) {}
