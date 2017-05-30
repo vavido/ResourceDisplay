@@ -198,5 +198,19 @@ namespace ArduinoSerial {
             }
             return true;
         }
+
+        public String GetConnectionInfo() {
+            if (IsConnected()) {
+                return "Connected to Arduino on " + connection.PortName;
+            } else {
+                return "Not connected";
+            }
+        }
+
+        public void CloseConnection() {
+            if (IsConnected()) {
+                connection.Close();
+            }
+        }
     }
 }

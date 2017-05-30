@@ -23,9 +23,6 @@ namespace ArduinoSerial {
     /// </summary>
     public partial class MainWindow : Window {
 
-        
-
-        private SerialPort sPort;
 
         public MainWindow() {
             InitializeComponent();
@@ -34,11 +31,29 @@ namespace ArduinoSerial {
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
 
+            SerialConnection sc = SerialConnection.GetInstance();
+            sc.Connect();
+
+            StatusText.Text = sc.GetConnectionInfo();
+
         }
 
-        private void ValueSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
-            int value = (int)ValueSlider.Value;
-            send(value);
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) {
+
+        }
+
+        private void OK_Button_Click(object sender, RoutedEventArgs e) {
+            SerialConnection sc = SerialConnection.GetInstance();
+
+            if (sc.IsConnected()) {
+                sc.PrintString(TextToSend.Text, 0);
+            }
+
+        }
+
+        private void Arduino_Serial_Interface_Closed(object sender, EventArgs e) {
+            SerialConnection.GetInstance().CloseConnection();
         }
     }
 }

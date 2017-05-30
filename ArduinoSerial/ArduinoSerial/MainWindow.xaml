@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArduinoSerial"
         mc:Ignorable="d"
-        Title="Arduino Serial Interface" Height="154.249" Width="400.494" WindowStartupLocation="CenterScreen">
+        Title="Arduino Serial Interface" Height="154.249" Width="400.494" WindowStartupLocation="CenterScreen" Closed="Arduino_Serial_Interface_Closed">
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBar.ItemsPanel>
@@ -22,10 +22,10 @@
             </StatusBarItem>
         </StatusBar>
         <Grid DockPanel.Dock="Top">
-            <Button x:Name="OK_Button" Content="OK" Width="75" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="307,71,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <Button x:Name="OK_Button" Content="OK" Width="75" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="307,71,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TabIndex="2" Click="OK_Button_Click" />
             <Label Content="" HorizontalAlignment="Left" Margin="38,82,0,0" VerticalAlignment="Top"/>
-            <Slider x:Name="ValueSlider" HorizontalAlignment="Left" Margin="10,41,0,40" VerticalAlignment="Center" Height="20" Width="372" Maximum="9999" VerticalContentAlignment="Center" ValueChanged="ValueSlider_ValueChanged" SmallChange="1"/>
-            <Label x:Name="ValueLabel" Content="Value:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="372"/>
+            <Label x:Name="ValueLabel" Content="Text: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="44"/>
+            <TextBox x:Name="TextToSend" HorizontalAlignment="Left" Height="23" Margin="59,14,0,0" TextWrapping="Wrap" Text="12.25" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged" MaxLength="8" MaxLines="1"/>
         </Grid>
 
     </DockPanel>
