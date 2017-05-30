@@ -32,21 +32,21 @@ byte decodeAddress(byte c) {
 
 
 /*
- * Format:
- *  First bit set <=> decimal point set
- *  
- *  Rest of the byte: ascii encoding of the char
- */
+   Format:
+    First bit set <=> decimal point set
 
-void printDigits(byte addr, byte[] data){
+    Rest of the byte: ascii encoding of the char
+*/
+
+void printDigits(byte addr, byte data[]) {
   int ic = addr > 2 ? 1 : 0;
   int s = addr % 2 == 0 ? 0 : 4;
 
-  for(int i = 0; i < data.lenth; i++){
+  for (int i = 0; i < sizeof(data); i++) {
     bool dp = data[i] >> 7; // Most significat bit indicates decimal point
     char c = data[i] & 0x7F; // 7 least significant bytes are the char data
 
-    lc.setChar(ic, s+i, c); 
+    lc.setChar(ic, s + i, c, dp);
   }
 }
 
@@ -57,19 +57,20 @@ void loop() {
     if (Serial.available()) {
       byte command = Serial.read();
       switch (decodeCommand(command)) {
-        case CMD_WRITE:
-          
-          byte address = decodeAddress(command);
+        case CMD_WRITE: {
 
-          byte data[4];
-          for (int i = 0; i < 4; i++) {
-            data[i] = Serial.read();
-          }
+            byte address = decodeAddress(command);
 
-          printDigits(address, data);
-          break;
+            byte data[4];
+            for (int i = 0; i < 4; i++) {
+              data[i] = Serial.read();
+            }
 
-      case default:
+            printDigits(address, data);
+            
+          } break;
+
+        default:
           break;
       }
     }
