@@ -157,12 +157,12 @@ namespace ArduinoSerial {
 
             byte[] res = new byte[chars.Length];
 
-            for(int i = 0; i < 4; i++){
+            for (int i = 0; i < 4; i++) {
 
                 byte c = (byte)chars[i];
                 byte dp = (dps[i]);
 
-                res[i] = (byte) (c | dp << 7);
+                res[i] = (byte)(c | dp << 7);
             }
 
             return res;
@@ -176,14 +176,14 @@ namespace ArduinoSerial {
         /// <param name="addr">The number of the display to print on (0-3)</param>
         private void PrintBytes(byte[] d, byte addr) {
 
-            byte command = (byte) (CMD_WRITE | addr);
+            byte command = (byte)(CMD_WRITE | addr);
 
             byte[] allData = new byte[5];
             allData[0] = command;
             Array.Copy(d, 0, allData, 1, 4);
 
             Debug.WriteLine("Sending data:");
-            foreach(byte b  in allData) {
+            foreach (byte b in allData) {
                 Debug.WriteLine(Convert.ToString(b, 2).PadLeft(8, '0'));
             }
 
