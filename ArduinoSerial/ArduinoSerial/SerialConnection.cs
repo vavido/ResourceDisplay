@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
 
-namespace ArduinoSerial {
+namespace ArduinoSerial.Connection {
 
 
     /// <summary>
@@ -92,7 +92,6 @@ namespace ArduinoSerial {
 
                     if (waitAck(sp)) {
 
-
                         //If there was response, test it
 
                         byte ack = (byte)sp.ReadByte();
@@ -104,7 +103,6 @@ namespace ArduinoSerial {
                             //SynAck connection to arduino with magic number 42
                             byte[] synack = { 42 };
                             sp.Write(synack, 0, 1);
-
                             this.connection = sp;
 
                             return true;
@@ -122,8 +120,6 @@ namespace ArduinoSerial {
             return false;
         }
 
-
-
         /// <summary>
         /// Checks wether a connection is established
         /// </summary>
@@ -132,40 +128,53 @@ namespace ArduinoSerial {
             return connection != null;
         }
 
+        /// <summary>
+        /// Prints a float value to the display
+        /// </summary>
+        /// <param name="f">The float value to print</param>
+        /// <param name="addr">The address of the display to use</param>
         public void PrintFloat(float f, byte addr) {
-            PrintString(f.ToString("0.###"), addr);
-        }
 
-        public void PrintString(String s, byte addr) {
-
-            if (s.Length > 8) {
-                throw new ArgumentException("Can't print String longer than 4 chars and 4 decimal points");
-            }
-            if (!CheckPrintableChars(s)) {
-                throw new ArgumentException("String contains unprintable chars");
-            }
-
-            char[] chars = { ' ', ' ', ' ', ' ' };
+            string floatValue = f.ToString("0.###");
             byte[] dps = { 0, 0, 0, 0 };
 
-            int count = 1;
-            char[] input = s.ToCharArray();
+            if (floatValue.Contains(".")) {
+                if (floatValue.Length < 5) {
 
-            for (int i = s.Length - 1; i >= 0; i--) {
-                if (input[i] == '.' || input[i] == ',') {
-                    dps[dps.Length - count] = 1;
-                    i--;
+                    leftpad(floatValue, " ", 5);
                 }
-                chars[chars.Length - count] = input[i];
-                count++;
+                dps[floatValue.IndexOf('.') - 1] = 1;
+                floatValue.Replace(".", "");
+            } else {
+                leftpad(floatValue, " ", 4);
             }
 
-            byte[] data = Encode(chars, dps);
-
-            PrintBytes(data, addr);
+            PrintString(floatValue, dps, addr);
 
         }
+        /// <summary>
+        /// Prints a string to the display with the specified address
+        /// </summary>
+        /// <param name="s">the string to print</param>
+        /// <param name="dps">indicates the decimal points</param>
+        /// <param name="addr">the address of the display</param>
+        public void PrintString(String s, byte[] dps, byte addr) {
 
+            if (dps.Length != 4) {
+                throw new ArgumentException("DP array must have exactly 4 elements");
+            }
+
+            byte[] data = Encode(s.ToCharArray(), dps);
+
+            PrintBytes(data, addr);
+        }
+
+        /// <summary>
+        /// Encodes data to send to the Arduino
+        /// </summary>
+        /// <param name="chars">Chars to send</param>
+        /// <param name="dps">Indicats placement of decimal points, has to be 4 items </param>
+        /// <returns></returns>
         private byte[] Encode(char[] chars, byte[] dps) {
 
             if (chars.Length != 4 || dps.Length != 4) throw new ArgumentException("Data to encode must be 4 digits long");
@@ -219,6 +228,11 @@ namespace ArduinoSerial {
             return true;
         }
 
+
+        /// <summary>
+        /// Gives some info about the connection
+        /// </summary>
+        /// <returns>A description of the connection state for display in the UI</returns>
         public String GetConnectionInfo() {
             if (IsConnected()) {
                 return "Connected to Arduino on " + connection.PortName;
@@ -227,10 +241,27 @@ namespace ArduinoSerial {
             }
         }
 
+        /// <summary>
+        /// Closes the connection to the arduino
+        /// </summary>
         public void CloseConnection() {
             if (IsConnected()) {
                 connection.Close();
             }
+        }
+
+        /// <summary>
+        /// Adds chars to the left of a string to reach a given length
+        /// </summary>
+        /// <param name="s">The string that needs padding</param>
+        /// <param name="padding">the char to use for padding</param>
+        /// <param name="destlenght">the desired length</param>
+        private void leftpad(string s, string padding, int destlenght) {
+
+            while (s.Length > destlenght) {
+                s = padding + s;
+            }
+
         }
     }
 }
