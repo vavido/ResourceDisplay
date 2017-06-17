@@ -43,6 +43,37 @@ namespace ArduinoSerial {
         private SerialPort connection;
 
         /// <summary>
+        /// Sends a syn signal to the arduino
+        /// </summary>
+        private void sendSyn(SerialPort sp) {
+
+            //Create syn challange consisting of two random bytes the arduino has to add
+            byte[] syn = new byte[2];
+            new Random().NextBytes(syn);
+
+            Debug.WriteLine("Sending " + String.Join("; ", syn));
+
+            sp.Write(syn, 0, 2);
+            sp.DiscardInBuffer();
+
+        }
+
+        private bool waitAck(SerialPort sp) {
+
+            long tStart = DateTime.Now.Ticks;
+
+            //Busy waiting for one byte in input buffer with timeout
+            while (sp.BytesToRead < 1 && DateTime.Now.Ticks - tStart < MAX_WAIT) {
+                Thread.Sleep(10);
+            }
+
+            //long tEnd = (DateTime.Now.Ticks - tStart) / TimeSpan.TicksPerMillisecond;
+
+
+            return sp.BytesToRead > 0;
+        }
+
+        /// <summary>
         /// Find & connect to Arduino
         /// </summary>
         public bool Connect() {
@@ -56,28 +87,10 @@ namespace ArduinoSerial {
 
                     SerialPort sp = new SerialPort(s, BAUDRATE);
                     sp.Open();
-                    sp.DiscardInBuffer();
 
-                    //Create syn challange consisting of two random bytes the arduino has to add
-                    byte[] syn = new byte[2];
-                    (new Random()).NextBytes(syn);
+                    sendSyn(sp);
 
-                    Debug.WriteLine("Sending " + String.Join("; ", syn));
-
-                    sp.Write(syn, 0, 2);
-                    sp.DiscardInBuffer();
-
-                    long tStart = DateTime.Now.Ticks;
-
-                    //Busy waiting for one byte in input buffer with timeout
-                    while (sp.BytesToRead < 1 && DateTime.Now.Ticks - tStart < MAX_WAIT) {
-                        Thread.Sleep(10);
-                    }
-
-                    long tEnd = (DateTime.Now.Ticks - tStart) / TimeSpan.TicksPerMillisecond;
-
-
-                    if (sp.BytesToRead > 0) {
+                    if (waitAck(sp)) {
 
 
                         //If there was response, test it
@@ -108,6 +121,8 @@ namespace ArduinoSerial {
 
             return false;
         }
+
+
 
         /// <summary>
         /// Checks wether a connection is established

@@ -223,3 +223,5 @@ ArduinoSerial/ArduinoSerial/obj/Debug/ArduinoSerial\.csproj\.FileListAbsolute\.t
 ArduinoSerial/ArduinoSerial/obj/Debug/
 
 *.exe
+
+*.opendb
