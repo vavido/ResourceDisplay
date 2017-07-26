@@ -1,6 +1,6 @@
 #include <LedControl.h>
 
-LedControl lc = LedControl(11, 13, 12, 1);
+LedControl lc = LedControl(11, 13, 12, 2);
 
 // Indicates wether the arduino is connected to a PC
 bool conn = false;
@@ -20,9 +20,13 @@ void setup() {
   lc.setIntensity(0, 15);
   lc.clearDisplay(0);
 
-  lc.setChar(0, 3, '_', false);
+  lc.shutdown(1, false);
+  lc.setIntensity(1, 15);
+  lc.clearDisplay(1);
+
+  lc.setChar(0, 0, '_', false);
   delay(250);
-  lc.setChar(0, 3, '-', false);
+  lc.setChar(0, 0, '-', false);
 
 }
 

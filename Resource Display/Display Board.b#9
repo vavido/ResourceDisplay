@@ -2535,7 +2535,10 @@ design rules under a new name.</description>
 <signal name="N$35">
 <contactref element="IC1" pad="24"/>
 <contactref element="IC2" pad="1"/>
-<wire x1="66.04" y1="2.54" x2="185.42" y2="2.54" width="0" layer="19" extent="1-1"/>
+<wire x1="66.04" y1="2.54" x2="67.31" y2="2.54" width="0.6096" layer="16"/>
+<wire x1="67.31" y1="2.54" x2="68.5292" y2="1.3208" width="0.6096" layer="16"/>
+<wire x1="184.2008" y1="1.3208" x2="185.42" y2="2.54" width="0.6096" layer="16"/>
+<wire x1="68.5292" y1="1.3208" x2="184.2008" y2="1.3208" width="0.6096" layer="16"/>
 </signal>
 <signal name="N$36">
 <contactref element="IC2" pad="13"/>
@@ -2561,7 +2564,10 @@ design rules under a new name.</description>
 <signal name="N$38">
 <contactref element="PCB1" pad="D11"/>
 <contactref element="IC1" pad="1"/>
-<wire x1="58.42" y1="2.54" x2="110.49" y2="3.81" width="0" layer="19" extent="1-1"/>
+<wire x1="58.42" y1="2.54" x2="60.96" y2="2.54" width="0.6096" layer="1"/>
+<wire x1="60.96" y1="2.54" x2="62.1792" y2="1.3208" width="0.6096" layer="1"/>
+<wire x1="62.1792" y1="1.3208" x2="108.0008" y2="1.3208" width="0.6096" layer="1"/>
+<wire x1="108.0008" y1="1.3208" x2="110.49" y2="3.81" width="0.6096" layer="1"/>
 </signal>
 </signals>
 </board>

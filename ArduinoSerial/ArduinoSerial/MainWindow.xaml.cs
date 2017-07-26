@@ -16,6 +16,7 @@ using System.Management;
 using System.IO.Ports;
 using System.Diagnostics;
 using System.Threading;
+using ArduinoSerial.Connection;
 
 namespace ArduinoSerial {
     /// <summary>
@@ -31,7 +32,7 @@ namespace ArduinoSerial {
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
 
-            SerialConnection sc = SerialConnection.GetInstance();
+            var sc = SerialConnection.GetInstance();
             sc.Connect();
 
             StatusText.Text = sc.GetConnectionInfo();
@@ -44,16 +45,26 @@ namespace ArduinoSerial {
         }
 
         private void OK_Button_Click(object sender, RoutedEventArgs e) {
-            SerialConnection sc = SerialConnection.GetInstance();
+            var sc = SerialConnection.GetInstance();
 
             if (sc.IsConnected()) {
-                sc.PrintString(TextToSend.Text, 0);
+                sc.PrintFloat(float.Parse(TextToSend.Text), 0);
             }
 
         }
 
         private void Arduino_Serial_Interface_Closed(object sender, EventArgs e) {
             SerialConnection.GetInstance().CloseConnection();
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
+            double value = SliderFormatTest.Value;
+
+            if (value < 999) {
+                TextBlockFormat.Text = $"{value,5:#.#}";
+            } else {
+                TextBlockFormat.Text = $"{value,4:#}";
+            }
         }
     }
 }

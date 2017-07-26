@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArduinoSerial"
         mc:Ignorable="d"
-        Title="Arduino Serial Interface" Height="154.249" Width="400.494" WindowStartupLocation="CenterScreen" Closed="Arduino_Serial_Interface_Closed">
+        Title="Arduino Serial Interface" Height="214.749" Width="400.494" WindowStartupLocation="CenterScreen" Closed="Arduino_Serial_Interface_Closed">
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBar.ItemsPanel>
@@ -22,10 +22,12 @@
             </StatusBarItem>
         </StatusBar>
         <Grid DockPanel.Dock="Top">
-            <Button x:Name="OK_Button" Content="OK" Width="75" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="307,71,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TabIndex="2" Click="OK_Button_Click" />
+            <Button x:Name="OK_Button" Content="OK" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,10,10" TabIndex="2" Click="OK_Button_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" />
             <Label Content="" HorizontalAlignment="Left" Margin="38,82,0,0" VerticalAlignment="Top"/>
             <Label x:Name="ValueLabel" Content="Text: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="44"/>
             <TextBox x:Name="TextToSend" HorizontalAlignment="Left" Height="23" Margin="59,14,0,0" TextWrapping="Wrap" Text="12.25" VerticalAlignment="Top" Width="120" TextChanged="TextBox_TextChanged" MaxLength="8" MaxLines="1"/>
+            <Slider x:Name="SliderFormatTest" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" Width="372" Maximum="9999" SmallChange="0.001" ValueChanged="Slider_ValueChanged"/>
+            <TextBlock x:Name="TextBlockFormat" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" RenderTransformOrigin="1.653,5.562" Margin="10,65,0,0" FontFamily="Consolas"/>
         </Grid>
 
     </DockPanel>
