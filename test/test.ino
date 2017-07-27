@@ -7,18 +7,24 @@ int number = 0;
 void setup() {
 
 
+
+  lc.shutdown(0, false);
+  lc.shutdown(1, false);
+
   lc.setIntensity(0, 15);
+  lc.setIntensity(1, 15);
+
   lc.clearDisplay(0);
   //lc.clearDisplay(1);
 
-  lc.setChar(0, 0, 'a', false);
-  lc.setChar(0, 1, 'b', false);
-  lc.setChar(0, 2, 'c', false);
-  lc.setChar(0, 3, 'd', false);
-  lc.setChar(0, 4, 'e', false);
-  lc.setChar(0, 5, 'f', false);
-  lc.setChar(0, 6, 'g', false);
-  lc.setChar(0, 7, 'h', false);
+  lc.setDigit(0, 0, 1, true);
+  lc.setDigit(0, 1, 2, true);
+  lc.setDigit(0, 2, 3, true);
+  lc.setDigit(0, 3, 4, true);
+  lc.setDigit(0, 4, 5, true);
+  lc.setDigit(0, 5, 6, true);
+  lc.setDigit(0, 6, 7, true);
+  lc.setDigit(0, 7, 8, true);
 
   /*
   lc.setChar(1, 0, 'a', false);
