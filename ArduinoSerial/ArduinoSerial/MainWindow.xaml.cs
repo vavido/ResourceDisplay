@@ -19,11 +19,11 @@ using System.Threading;
 using ArduinoSerial.Connection;
 
 namespace ArduinoSerial {
+
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-
 
         public MainWindow() {
             InitializeComponent();
@@ -31,18 +31,18 @@ namespace ArduinoSerial {
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
-
             var sc = SerialConnection.GetInstance();
             sc.Connect();
 
             StatusText.Text = sc.GetConnectionInfo();
-
         }
 
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) { }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) {
+        private void OK_Button_Click(object sender, RoutedEventArgs e) {
 
-        }
+            var value = float.Parse(TextToSend.Text);
+            StatusText.Text = $"\"{value,5:##0.###}\"";
 
         private void OK_Button_Click(object sender, RoutedEventArgs e) {
             var sc = SerialConnection.GetInstance();
@@ -51,6 +51,11 @@ namespace ArduinoSerial {
                 sc.PrintFloat(float.Parse(TextToSend.Text), 0);
             }
 
+            //var sc = SerialConnection.GetInstance();
+
+            //if (sc.IsConnected()) {
+            //  sc.PrintString(TextToSend.Text, new byte[4], 0x0);
+            //}
         }
 
         private void Arduino_Serial_Interface_Closed(object sender, EventArgs e) {
@@ -67,4 +72,5 @@ namespace ArduinoSerial {
             }
         }
     }
+
 }

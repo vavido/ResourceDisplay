@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
 
-namespace ArduinoSerial.Connection {
+namespace ArduinoSerial.Connection
+{
 
     /// <summary>
     /// Represents a serial connection to the arduino
     /// </summary>
-    class SerialConnection {
+    class SerialConnection
+    {
 
         // Singleton instance
         private static SerialConnection instance;
@@ -18,8 +20,10 @@ namespace ArduinoSerial.Connection {
         /// Get the instance of the singleton, create a new one if not present
         /// </summary>
         /// <returns></returns>
-        public static SerialConnection GetInstance() {
-            if (instance == null) {
+        public static SerialConnection GetInstance()
+        {
+            if (instance == null)
+            {
                 instance = new SerialConnection();
             }
             return instance;
@@ -34,12 +38,14 @@ namespace ArduinoSerial.Connection {
 
         private const int Baudrate = 9600;
 
+        private const string printableChars = "0123456789AaBbCcDdEeFfHhLlPp-.,_ ";
         private const string PrintableChars = "0123456789AaBbCcDdEeFfHhLlPp-.,_ ";
 
         private const byte CmdWrite = 0x10, CmdSleep = 0x20, CmdWake = 0x30;
 
         // The serial port on which the arduino is connected
         private SerialPort connection;
+
 
         /// <summary>
         /// Sends a syn signal to the arduino
@@ -113,7 +119,8 @@ namespace ArduinoSerial.Connection {
         /// Checks wether a connection is established
         /// </summary>
         /// <returns>True if connected to arduino</returns>
-        public bool IsConnected() {
+        public bool IsConnected()
+        {
             return connection != null;
         }
 
@@ -226,8 +233,10 @@ namespace ArduinoSerial.Connection {
         /// <summary>
         /// Closes the connection to the arduino
         /// </summary>
-        public void CloseConnection() {
-            if (IsConnected()) {
+        public void CloseConnection()
+        {
+            if (IsConnected())
+            {
                 connection.Close();
             }
         }
