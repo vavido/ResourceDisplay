@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.IO.Ports;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-
-using System.Diagnostics;
+﻿using System.Windows;
 
 namespace ArduinoSerial {
     /// <summary>

@@ -11,7 +11,21 @@ namespace ArduinoSerial.Connection {
     /// </summary>
     class SerialConnection {
 
-        public SerialConnection() { }
+        // Singleton instance
+        private static SerialConnection instance;
+
+        /// <summary>
+        /// Get the instance of the singleton, create a new one if not present
+        /// </summary>
+        /// <returns></returns>
+        public static SerialConnection GetInstance() {
+            if (instance == null) {
+                instance = new SerialConnection();
+            }
+            return instance;
+        }
+
+        private SerialConnection() { }
 
         /// <summary>
         /// Maximum time to wait for data in ticks
@@ -22,7 +36,7 @@ namespace ArduinoSerial.Connection {
 
         private const string PrintableChars = "0123456789AaBbCcDdEeFfHhLlPp-.,_ ";
 
-        private const byte CmdWrite = 0x10, CmdSleep = 0x20, CmdWake = 0x30, CmdDisconn = 0xF0;
+        private const byte CmdWrite = 0x10, CmdSleep = 0x20, CmdWake = 0x30;
 
         // The serial port on which the arduino is connected
         private SerialPort connection;
@@ -107,8 +121,7 @@ namespace ArduinoSerial.Connection {
         /// <param name="f">The float value to print</param>
         /// <param name="addr">The address of the display to use</param>
         public void PrintFloat(float f, byte addr) {
-            var floatValue = f < 1000 ? $"{f,5:#.0}" : $"{f,4:#}";
-
+            var floatValue = $"{f,4:##0.###}";
 
             byte[] dps = {0, 0, 0, 0};
 
@@ -162,13 +175,6 @@ namespace ArduinoSerial.Connection {
             return res;
         }
 
-        private void SendCommand(byte command, byte param) {
-            var cmd = new[] {(byte) (command ^ param)};
-            if (IsConnected()) {
-                connection.Write(cmd, 0, 1);
-            }
-        }
-
         /// <summary>
         /// Sends a print command and then the array of bytes
         /// </summary>
@@ -220,10 +226,9 @@ namespace ArduinoSerial.Connection {
         /// Closes the connection to the arduino
         /// </summary>
         public void CloseConnection() {
-            if (!IsConnected()) return;
-
-            SendCommand(CmdDisconn, 0);
-            connection.Close();
+            if (IsConnected()) {
+                connection.Close();
+            }
         }
 
     }

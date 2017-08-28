@@ -1,23 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
+using ArduinoSerial.Connection;
 
 namespace ArduinoSerial {
-    class SystemMonitor {
 
-        public SystemMonitor(int bufferFreq, int bufferTime) {
+    internal class SystemMonitor {
 
+        private readonly SerialConnection connection;
+        private readonly Timer timer;
+        private readonly PerformanceCounter cpuCounter;
 
-            PerformanceCounter cpuCounter = new PerformanceCounter();
+        public SystemMonitor(int bufferFreq, int bufferTime, SerialConnection connection) {
+            this.connection = connection;
+            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
-
+            timer = new Timer() {Interval = 1000f / bufferFreq, Enabled = true, AutoReset = true};
+            timer.Elapsed += TimerOnElapsed;
         }
 
+        public void StartMonitoring() {
+            if (connection.Connect()) {
+                timer.Start();
+            }
+        }
 
+        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs) {
+            connection.PrintFloat(cpuCounter.NextValue(), 0);
+        }
 
+        public void StopMonitoring() {
+            timer.Stop();
+            if (connection.IsConnected()) {
+                connection.CloseConnection();
+            }
+        }
 
     }
+
 }

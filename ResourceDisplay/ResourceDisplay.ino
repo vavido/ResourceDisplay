@@ -1,5 +1,6 @@
 #include <LedControl.h>
 
+
 LedControl lc = LedControl(11, 13, 12, 2);
 
 // Indicates wether the arduino is connected to a PC
@@ -9,8 +10,13 @@ bool conn = false;
 const byte CMD_WRITE = 1;
 const byte CMD_SLEEP = 2;
 const byte CMD_WAKEUP = 3;
+const byte CMD_DISCONN = 15;
 
 const int BAUDRATE = 9600;
+
+//for waiting animation
+long lasttime = 0;
+int digit = 0;
 
 void setup() {
 
@@ -62,18 +68,18 @@ void loop() {
   if (conn) {
 
     if (Serial.available()) {
-      
+
       byte command = Serial.read();
-      
+
       switch (decodeCommand(command)) {
-      
+
         case CMD_WRITE: {
 
             byte address = decodeAddress(command);
 
             byte data[4];
-            while(Serial.available() < 4){} //Wait for the rest of the package
-            
+            while (Serial.available() < 4) {} //Wait for the rest of the package
+
             for (int i = 0; i < 4; i++) {
               data[i] = Serial.read();
             }
@@ -82,6 +88,12 @@ void loop() {
 
           } break;
 
+        case CMD_DISCONN: {
+
+            Serial.write((byte)42);
+            conn = false;
+
+          } break;
         default:
           break;
       }
@@ -99,9 +111,6 @@ void loop() {
       //Send ack: add a and b
       Serial.write(a + b);
 
-      lc.setDigit(0, 1, a%10, false);
-      lc.setDigit(0, 3, b%10, false);
-
       //Wait for synack
       while (!Serial.available()) {}
 
@@ -110,6 +119,16 @@ void loop() {
         //Correct synack received, connection established
         conn = true;
 
+        lc.clearDisplay(0);
+        lc.clearDisplay(1);
+
+      }
+    } else {
+      if (millis() - lasttime > 50) {
+        lc.setChar(floor(digit / 8), digit % 8, ' ', false);
+        digit = (digit + 1) % 16;
+        lc.setChar(floor(digit / 8), digit % 8, '-', false);
+        lasttime = millis();
       }
     }
   }
