@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace ArduinoSerial {
+namespace ArduinoSerial.Util {
 
     class AverageBuffer {
 
