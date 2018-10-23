@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
@@ -11,32 +10,15 @@ namespace ArduinoSerial.Connection {
     /// </summary>
     class SerialConnection {
 
-        // Singleton instance
-        private static SerialConnection instance;
+        public enum ConnectionState {
 
-        /// <summary>
-        /// Get the instance of the singleton, create a new one if not present
-        /// </summary>
-        /// <returns></returns>
-        public static SerialConnection GetInstance() {
-            if (instance == null) {
-                instance = new SerialConnection();
-            }
-            return instance;
+            Disconnected,
+            Connected,
+            Connecting
+
         }
 
-        private SerialConnection() { }
-
-        /// <summary>
-        /// Maximum time to wait for data in ticks
-        /// </summary>
-        private const long MaxWait = 1000 * TimeSpan.TicksPerMillisecond;
-
-        private const int Baudrate = 9600;
-
-        private const string PrintableChars = "0123456789AaBbCcDdEeFfHhLlPp-.,_ ";
-
-        private const byte CmdWrite = 0x10, CmdSleep = 0x20, CmdWake = 0x30;
+        public ConnectionState State { get; private set; } = ConnectionState.Disconnected;
 
         // The serial port on which the arduino is connected
         private SerialPort connection;
@@ -55,7 +37,7 @@ namespace ArduinoSerial.Connection {
             var tStart = DateTime.Now.Ticks;
 
             //Busy waiting for one byte in input buffer with timeout
-            while (sp.BytesToRead < 1 && DateTime.Now.Ticks - tStart < MaxWait) {
+            while (sp.BytesToRead < 1 && DateTime.Now.Ticks - tStart < Properties.Settings.Default.ConnectionTimeout) {
                 Thread.Sleep(10);
             }
 
@@ -68,13 +50,15 @@ namespace ArduinoSerial.Connection {
         /// Find & connect to Arduino
         /// </summary>
         public bool Connect() {
+            State = ConnectionState.Connecting;
+
             var ports = SerialPort.GetPortNames();
 
             foreach (var s in ports) {
                 try {
                     Debug.WriteLine("Trying port: " + s);
 
-                    var sp = new SerialPort(s, Baudrate);
+                    var sp = new SerialPort(s, Properties.Settings.Default.BaudRate);
                     sp.Open();
 
                     //Create syn challange consisting of two random bytes the arduino has to add
@@ -111,68 +95,15 @@ namespace ArduinoSerial.Connection {
         /// Checks wether a connection is established
         /// </summary>
         /// <returns>True if connected to arduino</returns>
-        public bool IsConnected() {
-            return connection != null;
+        private bool IsConnected() {
+            return State == ConnectionState.Connected;
         }
 
-        /// <summary>
-        /// Prints a float value to the display
-        /// </summary>
-        /// <param name="f">The float value to print</param>
-        /// <param name="addr">The address of the display to use</param>
-        public void PrintFloat(float f, byte addr) {
-            var floatValue = $"{f,4:##0.###}";
-
-            byte[] dps = {0, 0, 0, 0};
-
-            if (floatValue.Contains(",")) {
-                dps[floatValue.IndexOf(',') - 1] = 1;
-                floatValue = floatValue.Replace(",", "");
+        private void SendCommand(Command command, byte param) {
+            byte[] cmd = new[] {(byte) ((byte) command ^ param)};
+            if (IsConnected()) {
+                connection.Write(cmd, 0, 1);
             }
-
-            PrintString(floatValue, dps, addr);
-        }
-
-        /// <summary>
-        /// Prints a string to the display with the specified address
-        /// </summary>
-        /// <param name="s">the string to print</param>
-        /// <param name="dps">indicates the decimal points</param>
-        /// <param name="addr">the address of the display</param>
-        public void PrintString(string s, byte[] dps, byte addr) {
-            if (!CheckPrintableChars(s))
-                throw new ArgumentException(
-                    $"The string contains unprintable chars! Only {PrintableChars} can be used");
-
-            if (dps.Length != 4) {
-                throw new ArgumentException("DP array must have exactly 4 elements");
-            }
-
-            var data = Encode(s.ToCharArray(), dps);
-
-            PrintBytes(data, addr);
-        }
-
-        /// <summary>
-        /// Encodes data to send to the Arduino
-        /// </summary>
-        /// <param name="chars">Chars to send</param>
-        /// <param name="dps">Indicats placement of decimal points, has to be 4 items </param>
-        /// <returns></returns>
-        private static byte[] Encode(IReadOnlyList<char> chars, IReadOnlyList<byte> dps) {
-            if (chars.Count != 4 || dps.Count != 4)
-                throw new ArgumentException("Data to encode must be 4 digits long");
-
-            var res = new byte[chars.Count];
-
-            for (var i = 0; i < 4; i++) {
-                var c = (byte) chars[i];
-                var dp = (dps[i]);
-
-                res[i] = (byte) (c | dp << 7);
-            }
-
-            return res;
         }
 
         /// <summary>
@@ -180,8 +111,8 @@ namespace ArduinoSerial.Connection {
         /// </summary>
         /// <param name="d"></param>
         /// <param name="addr">The number of the display to print on (0-3)</param>
-        private void PrintBytes(byte[] d, byte addr) {
-            var command = (byte) (CmdWrite | addr);
+        private void SendBytes(byte[] d, byte addr) {
+            var command = (byte) ((byte) Command.Write | addr);
 
             var allData = new byte[5];
             allData[0] = command;
@@ -196,29 +127,19 @@ namespace ArduinoSerial.Connection {
         }
 
         /// <summary>
-        /// Checks if a string only consists of printable chars
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        private bool CheckPrintableChars(string s) {
-            foreach (var c in s) {
-                if (PrintableChars.IndexOf(c) == -1) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Gives some info about the connection
         /// </summary>
         /// <returns>A description of the connection state for display in the UI</returns>
         public string GetConnectionInfo() {
-            if (IsConnected()) {
-                return "Connected to Arduino on " + connection.PortName;
-            } else {
-                return "Not connected";
+            switch (State) {
+                case ConnectionState.Connected:
+                    return "Connected to Arduino on " + connection.PortName;
+                case ConnectionState.Disconnected:
+                    return "Not connected";
+                case ConnectionState.Connecting:
+                    return "Searching for Arduino...";
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -226,9 +147,11 @@ namespace ArduinoSerial.Connection {
         /// Closes the connection to the arduino
         /// </summary>
         public void CloseConnection() {
-            if (IsConnected()) {
-                connection.Close();
-            }
+            if (!IsConnected()) return;
+
+            SendCommand(Command.Disconnect, 0);
+            State = ConnectionState.Disconnected;
+            connection.Close();
         }
 
     }

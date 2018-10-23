@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using ArduinoSerial.Connection;
+using static ArduinoSerial.Connection.SerialConnection.ConnectionState;
 
 namespace ArduinoSerial {
 
@@ -23,7 +24,7 @@ namespace ArduinoSerial {
 
             StatusText.Text = sc.GetConnectionInfo();
 
-            if (!sc.IsConnected()) return;
+            if (!(sc.State == Connected)) return;
 
             var sm = new SystemMonitor(4, 4, sc);
             sm.StartMonitoring();
@@ -34,7 +35,7 @@ namespace ArduinoSerial {
         private void OK_Button_Click(object sender, RoutedEventArgs e) { }
 
         private void Arduino_Serial_Interface_Closed(object sender, EventArgs e) {
-            if (sc.IsConnected()) {
+            if (sc.State == Connected) {
                 sc.CloseConnection();
             }
         }
