@@ -22,7 +22,7 @@ namespace ArduinoSerial.Connection {
 
         private const string PrintableChars = "0123456789AaBbCcDdEeFfHhLlPp-.,_ ";
 
-        private const byte CmdWrite = 0x10, CmdSleep = 0x20, CmdWake = 0x30, CmdDisconn = 0xF0;
+        private const byte CmdWrite = 0x10, CmdSleep = 0x20, CmdWake = 0x30, CmdDisconnect = 0xF0;
 
         // The serial port on which the arduino is connected
         private SerialPort connection;
@@ -222,7 +222,7 @@ namespace ArduinoSerial.Connection {
         public void CloseConnection() {
             if (!IsConnected()) return;
 
-            SendCommand(CmdDisconn, 0);
+            SendCommand(CmdDisconnect, 0);
             connection.Close();
         }
 

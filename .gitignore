@@ -225,3 +225,5 @@ ArduinoSerial/ArduinoSerial/obj/Debug/
 *.exe
 
 *.opendb
+
+*.idea/

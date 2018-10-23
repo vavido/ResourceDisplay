@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Timers;
 using ArduinoSerial.Connection;
 
@@ -11,7 +10,7 @@ namespace ArduinoSerial {
         private readonly Timer timer;
         private readonly PerformanceCounter cpuCounter;
 
-        public SystemMonitor(int bufferFreq, int bufferTime, SerialConnection connection) {
+        public SystemMonitor(int bufferFreq, int bufferSamples, SerialConnection connection) {
             this.connection = connection;
             cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 

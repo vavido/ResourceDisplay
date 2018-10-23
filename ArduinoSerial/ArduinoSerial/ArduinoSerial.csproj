@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AverageBuffer.cs" />
     <Compile Include="SerialConnection.cs" />
     <Compile Include="SystemMonitor.cs" />
     <Page Include="MainWindow.xaml">
